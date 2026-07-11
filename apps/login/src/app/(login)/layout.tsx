@@ -70,9 +70,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 >
                   <div className="relative mx-auto w-full max-w-[1100px] py-8">
                     <div>{children}</div>
-                    <div className="mx-auto flex max-w-[440px] flex-row items-center justify-end space-x-4 px-4 py-4 md:max-w-full md:px-8">
-                      <LanguageSwitcher languages={languages} />
-                      <ThemeSwitch />
+                    <div className="mx-auto flex max-w-[440px] flex-row items-center justify-between px-4 py-4 md:max-w-full md:px-8">
+                      {/* dbtr-Fork: Quellcode-Angebot für die modifizierte Login-UI
+                          (Lizenz-Transparenz, gilt für alle bedienten Instanzen). */}
+                      <a
+                        href="https://github.com/dbtr-digital/zitadel/tree/dbtr-login"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-12px opacity-60 transition-all hover:opacity-100"
+                        data-testid="source-code-link"
+                      >
+                        Source Code
+                      </a>
+                      <div className="flex flex-row items-center space-x-4">
+                        <LanguageSwitcher languages={languages} />
+                        <ThemeSwitch />
+                      </div>
                     </div>
                   </div>
                 </BackgroundWrapper>

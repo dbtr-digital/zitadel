@@ -24,11 +24,11 @@
   },
   "loginname": {
     "title": "Welcome back!",
-    "description": "Enter your login details.",
+    "description": "Enter your email address and password.",
     "register": "Register new user",
     "submit": "Continue",
     "labels": {
-      "loginname": "Loginname",
+      "loginname": "Email",
       "username": "Username",
       "usernameOrPhoneNumber": "Username or phone number",
       "usernameOrEmail": "Username or email"
@@ -51,7 +51,8 @@
       "passkeysNotAllowed": "Passkeys not allowed! Contact your administrator for more information.",
       "couldNotFindIdentityProvider": "Could not find identity provider.",
       "userNotActive": "User is not active. Contact your administrator for more information."
-    }
+    },
+    "moreOptions": "More options"
   },
   "zitadel": {
     "errors": {

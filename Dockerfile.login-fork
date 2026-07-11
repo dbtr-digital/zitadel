@@ -1,0 +1,39 @@
+# dbtr-Fork der Zitadel-Login-UI (v4.15.3) — Ein-Screen-Login (E-Mail+Passwort),
+# "Weitere Optionen"-Accordion, Label "E-Mail". Baut das Next.js-Standalone-Bundle
+# im Container und verpackt es identisch zum Upstream apps/login/Dockerfile.
+FROM node:24-alpine AS build
+RUN apk add --no-cache git bash
+RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
+WORKDIR /repo
+ENV NX_NO_CLOUD=true \
+    NX_DAEMON=false \
+    NEXT_TELEMETRY_DISABLED=1 \
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+COPY . .
+# Nur Login-App + Workspace-Abhängigkeiten (proto/client) installieren —
+# spart den riesigen Console-/Docs-Dependency-Baum.
+RUN pnpm install --frozen-lockfile --filter @zitadel/login...
+RUN pnpm exec nx run @zitadel/login:build --verbose
+
+# --- Runtime (Spiegel von apps/login/Dockerfile) ------------------------------
+FROM node:24-alpine
+WORKDIR /app
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+RUN mkdir -p /.env-file && touch /.env-file/.env && chown -R nextjs:nodejs /.env-file
+
+COPY --from=build --chown=nextjs:nodejs /repo/apps/login/.next/standalone ./
+
+USER nextjs
+ENV HOSTNAME="::" \
+    PORT="3000" \
+    NODE_ENV="production" \
+    NODE_OPTIONS="--use-openssl-ca --require /app/load-ssl-cert-dir.cjs" \
+    SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt" \
+    ZITADEL_TLS_ENABLED="false" \
+    OTEL_SERVICE_NAME="zitadel-login" \
+    OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD ["/usr/local/bin/node", "/app/healthcheck.mjs", "/ui/v2/login/ready"]
+ENTRYPOINT ["/app/entrypoint.sh", "node", "apps/login/server.js"]

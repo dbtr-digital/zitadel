@@ -52,7 +52,8 @@
       "passkeysNotAllowed": "مفاتيح المرور غير مسموح بها! اتصل بالمسؤول لمزيد من المعلومات.",
       "couldNotFindIdentityProvider": "تعذر العثور على مزود الهوية.",
       "userNotActive": "المستخدم غير نشط. اتصل بالمسؤول لمزيد من المعلومات."
-    }
+    },
+    "moreOptions": "خيارات أخرى"
   },
   "zitadel": {
     "errors": {
