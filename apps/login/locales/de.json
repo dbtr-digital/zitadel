@@ -24,11 +24,11 @@
   },
   "loginname": {
     "title": "Willkommen zurück!",
-    "description": "Geben Sie Ihre Anmeldedaten ein.",
+    "description": "Geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein.",
     "register": "Neuen Benutzer registrieren",
     "submit": "Weiter",
     "labels": {
-      "loginname": "Loginname",
+      "loginname": "E-Mail",
       "username": "Benutzername",
       "usernameOrPhoneNumber": "Benutzername oder Telefonnummer",
       "usernameOrEmail": "Benutzername oder E-Mail"
@@ -51,7 +51,8 @@
       "passkeysNotAllowed": "Passkeys nicht zulässig! Wenden Sie sich für weitere Informationen an Ihren Administrator.",
       "couldNotFindIdentityProvider": "Identitätsanbieter konnte nicht gefunden werden.",
       "userNotActive": "Das Benutzerkonto ist inaktiv. Wenden Sie sich für weitere Informationen an Ihren Administrator."
-    }
+    },
+    "moreOptions": "Weitere Optionen"
   },
   "zitadel": {
     "errors": {

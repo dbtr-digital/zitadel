@@ -51,7 +51,8 @@
       "passkeysNotAllowed": "Klucze dostępu są niedozwolone! Skontaktuj się z administratorem, aby uzyskać więcej informacji.",
       "couldNotFindIdentityProvider": "Nie udało się znaleźć dostawcy tożsamości.",
       "userNotActive": "Użytkownik jest nieaktywny. Skontaktuj się z administratorem, aby uzyskać więcej informacji."
-    }
+    },
+    "moreOptions": "Więcej opcji"
   },
   "zitadel": {
     "errors": {

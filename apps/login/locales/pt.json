@@ -51,7 +51,8 @@
       "passkeysNotAllowed": "Chaves de acesso não são permitidas! Entre em contato com o administrador para mais informações.",
       "couldNotFindIdentityProvider": "Não foi possível encontrar o provedor de identidade.",
       "userNotActive": "O usuário não está ativo. Entre em contato com o administrador para mais informações."
-    }
+    },
+    "moreOptions": "Mais opções"
   },
   "zitadel": {
     "errors": {
