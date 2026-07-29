@@ -24,11 +24,12 @@
   },
   "loginname": {
     "title": "Willkommen zurück!",
-    "description": "Geben Sie Ihre Anmeldedaten ein.",
+    "description": "Geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein.",
     "register": "Neuen Benutzer registrieren",
+    "existingAccount": "Diese E-Mail-Adresse existiert bereits. Bitte melden Sie sich jetzt an.",
     "submit": "Weiter",
     "labels": {
-      "loginname": "Loginname",
+      "loginname": "E-Mail",
       "username": "Benutzername",
       "usernameOrPhoneNumber": "Benutzername oder Telefonnummer",
       "usernameOrEmail": "Benutzername oder E-Mail"
@@ -51,7 +52,8 @@
       "passkeysNotAllowed": "Passkeys nicht zulässig! Wenden Sie sich für weitere Informationen an Ihren Administrator.",
       "couldNotFindIdentityProvider": "Identitätsanbieter konnte nicht gefunden werden.",
       "userNotActive": "Das Benutzerkonto ist inaktiv. Wenden Sie sich für weitere Informationen an Ihren Administrator."
-    }
+    },
+    "moreOptions": "Weitere Optionen"
   },
   "zitadel": {
     "errors": {
@@ -383,6 +385,10 @@
     "userIdMissing": "Keine Benutzer-ID angegeben!",
     "successTitle": "Benutzer verifiziert",
     "successDescription": "Der Benutzer wurde erfolgreich verifiziert.",
+    "alreadyVerifiedDescription": "Diese E-Mail-Adresse ist bereits verifiziert. Sie können sich jetzt anmelden.",
+    "successLogin": "Einloggen",
+    "successAssistant": "Einrichtungs-Assistent",
+    "successHome": "Startseite",
     "successContinue": "Weiter",
     "setupAuthenticator": "Authentifikator einrichten",
     "verify": {
@@ -403,7 +409,7 @@
       "couldNotResendEmail": "E-Mail konnte nicht erneut gesendet werden",
       "couldNotVerifyUser": "Benutzer konnte nicht verifiziert werden",
       "couldNotVerifyInvite": "Einladung konnte nicht verifiziert werden",
-      "couldNotVerifyEmail": "E-Mail konnte nicht verifiziert werden",
+      "couldNotVerifyEmail": "Der Code ist abgelaufen oder ungültig. Bitte fordern Sie einen neuen an.",
       "couldNotVerify": "Konnte nicht verifizieren",
       "couldNotLoadUser": "Benutzer konnte nicht geladen werden",
       "couldNotLoadAuthenticators": "Mögliche Authentifikatoren konnten nicht geladen werden",

@@ -51,7 +51,8 @@
       "passkeysNotAllowed": "Passkeys niet toegestaan! Neem contact op met jouw beheerder voor meer informatie.",
       "couldNotFindIdentityProvider": "Kon identiteitsprovider niet vinden.",
       "userNotActive": "Gebruiker is niet actief. Neem contact op met jouw beheerder voor meer informatie."
-    }
+    },
+    "moreOptions": "Meer opties"
   },
   "zitadel": {
     "errors": {

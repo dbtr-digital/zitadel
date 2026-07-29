@@ -24,11 +24,12 @@
   },
   "loginname": {
     "title": "Welcome back!",
-    "description": "Enter your login details.",
+    "description": "Enter your email address and password.",
     "register": "Register new user",
+    "existingAccount": "This email address already exists. Please sign in now.",
     "submit": "Continue",
     "labels": {
-      "loginname": "Loginname",
+      "loginname": "Email",
       "username": "Username",
       "usernameOrPhoneNumber": "Username or phone number",
       "usernameOrEmail": "Username or email"
@@ -51,7 +52,8 @@
       "passkeysNotAllowed": "Passkeys not allowed! Contact your administrator for more information.",
       "couldNotFindIdentityProvider": "Could not find identity provider.",
       "userNotActive": "User is not active. Contact your administrator for more information."
-    }
+    },
+    "moreOptions": "More options"
   },
   "zitadel": {
     "errors": {
@@ -383,6 +385,10 @@
     "userIdMissing": "No userId provided!",
     "successTitle": "User verified",
     "successDescription": "The user has been verified successfully.",
+    "alreadyVerifiedDescription": "This email address is already verified. You can sign in now.",
+    "successLogin": "Sign in",
+    "successAssistant": "Setup assistant",
+    "successHome": "Home",
     "successContinue": "Continue",
     "setupAuthenticator": "Setup authenticator",
     "verify": {
@@ -403,7 +409,7 @@
       "couldNotResendEmail": "Could not resend email",
       "couldNotVerifyUser": "Could not verify user",
       "couldNotVerifyInvite": "Could not verify invite",
-      "couldNotVerifyEmail": "Could not verify email",
+      "couldNotVerifyEmail": "The code has expired or is invalid. Please request a new one.",
       "couldNotVerify": "Could not verify",
       "couldNotLoadUser": "Could not load user",
       "couldNotLoadAuthenticators": "Could not load possible authenticators",

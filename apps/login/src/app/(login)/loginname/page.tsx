@@ -1,7 +1,8 @@
 import { DynamicTheme } from "@/components/dynamic-theme";
+import { Alert, AlertType } from "@/components/alert";
 import { SignInWithIdp } from "@/components/sign-in-with-idp";
 import { Translated } from "@/components/translated";
-import { UsernameForm } from "@/components/username-form";
+import { UsernamePasswordForm } from "@/components/username-password-form";
 import { getServiceConfig } from "@/lib/service-url";
 import { getActiveIdentityProviders, getBrandingSettings, getDefaultOrg, getLoginSettings } from "@/lib/zitadel";
 import { Organization } from "@zitadel/proto/zitadel/org/v2/org_pb";
@@ -22,6 +23,7 @@ export default async function Page(props: { searchParams: Promise<Record<string 
   const organization = searchParams?.organization;
   const orgDomain = searchParams?.orgDomain;
   const submit: boolean = searchParams?.submit === "true";
+  const existing = searchParams?.existing === "true";
 
   const _headers = await headers();
   const { serviceConfig } = getServiceConfig(_headers);
@@ -57,8 +59,15 @@ export default async function Page(props: { searchParams: Promise<Record<string 
       </div>
 
       <div className="w-full">
+        {existing && (
+          <div className="mb-4">
+            <Alert type={AlertType.INFO}>
+              <Translated i18nKey="existingAccount" namespace="loginname" />
+            </Alert>
+          </div>
+        )}
         {loginSettings?.allowLocalAuthentication && (
-          <UsernameForm
+          <UsernamePasswordForm
             loginName={loginName}
             requestId={requestId}
             organization={organization} // stick to "organization" as we still want to do user discovery based on the searchParams not the default organization, later the organization is determined by the found user
@@ -68,20 +77,48 @@ export default async function Page(props: { searchParams: Promise<Record<string 
             hideSuffix={branding?.hideLoginNameSuffix}
             submit={submit}
             allowRegister={!!loginSettings?.allowRegister}
-          ></UsernameForm>
+          ></UsernamePasswordForm>
         )}
 
-        {loginSettings?.allowExternalIdp && !!identityProviders?.length && (
-          <div className="w-full pt-6 pb-4">
-            <SignInWithIdp
-              identityProviders={identityProviders}
-              requestId={requestId}
-              organization={organization}
-              postErrorRedirectUrl="/loginname"
-              showLabel={loginSettings?.allowLocalAuthentication}
-            ></SignInWithIdp>
-          </div>
-        )}
+        {/* dbtr-Fork: weitere Anmeldewege (IdPs) eingeklappt unter "Weitere Optionen";
+            ohne lokale Anmeldung bleiben sie direkt sichtbar. */}
+        {loginSettings?.allowExternalIdp &&
+          !!identityProviders?.length &&
+          (loginSettings?.allowLocalAuthentication ? (
+            <details className="group w-full pt-4 pb-4">
+              <summary className="hover:text-primary-light-500 dark:hover:text-primary-dark-500 flex cursor-pointer list-none items-center text-sm transition-all [&::-webkit-details-marker]:hidden">
+                <Translated i18nKey="moreOptions" namespace="loginname" />
+                <svg
+                  className="ml-1 h-4 w-4 transition-transform group-open:rotate-180"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="w-full pt-4">
+                <SignInWithIdp
+                  identityProviders={identityProviders}
+                  requestId={requestId}
+                  organization={organization}
+                  postErrorRedirectUrl="/loginname"
+                  showLabel={false}
+                ></SignInWithIdp>
+              </div>
+            </details>
+          ) : (
+            <div className="w-full pt-6 pb-4">
+              <SignInWithIdp
+                identityProviders={identityProviders}
+                requestId={requestId}
+                organization={organization}
+                postErrorRedirectUrl="/loginname"
+                showLabel={false}
+              ></SignInWithIdp>
+            </div>
+          ))}
       </div>
     </DynamicTheme>
   );

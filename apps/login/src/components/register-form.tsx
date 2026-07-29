@@ -59,7 +59,9 @@ export function RegisterForm({
   const t = useTranslations("register");
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [selected, setSelected] = useState<AuthenticationMethod>(methods[0]);
+  // Password is the least surprising registration default. Passkey remains
+  // available as an explicit opt-in when the organization allows it.
+  const [selected, setSelected] = useState<AuthenticationMethod>(AuthenticationMethod.Password);
   const [error, setError] = useState<string>("");
   const [samlData, setSamlData] = useState<{ url: string; fields: Record<string, string> } | null>(null);
 
@@ -193,7 +195,7 @@ export function RegisterForm({
             onClick={handleSubmit((values) => {
               const usePasswordToContinue: boolean =
                 loginSettings?.allowLocalAuthentication && loginSettings?.passkeysType == PasskeysType.ALLOWED
-                  ? !(selected === methods[0]) // choose selection if both available
+                  ? selected === AuthenticationMethod.Password // choose selection if both available
                   : !!loginSettings?.allowLocalAuthentication; // if password is chosen
               // set password as default if only password is allowed
               return submitAndContinue(values, usePasswordToContinue);
