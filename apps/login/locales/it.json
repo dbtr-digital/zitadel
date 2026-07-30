@@ -78,13 +78,13 @@
         "couldNotResetPassword": "Impossibile reimpostare la password"
       },
       "info": {
-        "passwordResetSent": "La password è stata reimpostata. Controlla la tua e-mail"
+        "passwordResetSent": "Se esiste un account per questo indirizzo, è stato inviato un codice. Controlla anche la cartella spam"
       }
     },
     "set": {
       "title": "Imposta Password",
       "description": "Imposta la password per il tuo account",
-      "codeSent": "Un nuovo codice è stato inviato al tuo indirizzo email.",
+      "codeSent": "Se esiste un account per questo indirizzo, è stato inviato un codice. Controlla anche la cartella spam.",
       "noCodeReceived": "Non hai ricevuto un codice?",
       "resend": "Invia di nuovo",
       "submit": "Continua",

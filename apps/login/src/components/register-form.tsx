@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Alert, AlertType } from "./alert";
-import { AuthenticationMethod, AuthenticationMethodRadio, methods } from "./authentication-method-radio";
+import { AuthenticationMethod, AuthenticationMethodRadio } from "./authentication-method-radio";
 import { AutoSubmitForm } from "./auto-submit-form";
 import { BackButton } from "./back-button";
 import { Button, ButtonVariants } from "./button";

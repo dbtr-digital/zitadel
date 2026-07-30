@@ -78,13 +78,13 @@
         "couldNotResetPassword": "Şifre sıfırlanamadı"
       },
       "info": {
-        "passwordResetSent": "Şifre sıfırlandı. Lütfen e-postanızı kontrol edin"
+        "passwordResetSent": "Bu adres için bir hesap varsa bir kod gönderildi. Spam klasörünü de kontrol edin"
       }
     },
     "set": {
       "title": "Şifre Belirle",
       "description": "Hesabınız için şifre belirleyin",
-      "codeSent": "E-posta adresinize yeni bir kod gönderildi.",
+      "codeSent": "Bu adres için bir hesap varsa bir kod gönderildi. Spam klasörünü de kontrol edin.",
       "noCodeReceived": "Kod almadınız mı?",
       "resend": "Kodu tekrar gönder",
       "submit": "Devam",

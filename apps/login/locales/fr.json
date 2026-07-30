@@ -78,13 +78,13 @@
         "couldNotResetPassword": "Impossible de réinitialiser le mot de passe"
       },
       "info": {
-        "passwordResetSent": "Le mot de passe a été réinitialisé. Veuillez vérifier vos e-mails."
+        "passwordResetSent": "Si un compte existe pour cette adresse, un code a été envoyé. Vérifiez également votre dossier de courrier indésirable"
       }
     },
     "set": {
       "title": "Définir le mot de passe",
       "description": "Définissez le mot de passe de votre compte",
-      "codeSent": "Un nouveau code a été envoyé à votre adresse e-mail.",
+      "codeSent": "Si un compte existe pour cette adresse, un code a été envoyé. Vérifiez également votre dossier de courrier indésirable.",
       "noCodeReceived": "Vous n'avez pas reçu de code ?",
       "resend": "Renvoyer le code",
       "submit": "Continuer",

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { TextInput } from "./input";
 
@@ -130,6 +130,22 @@ describe("TextInput Component", () => {
       const { container } = render(<TextInput label="Test" autoFocus />);
       const input = container.querySelector("input");
       expect(input).toHaveFocus();
+    });
+
+    it("should reveal and hide password values without submitting a form", () => {
+      const { container } = render(<TextInput label="Password" type="password" />);
+      const input = container.querySelector("input");
+      const toggle = screen.getByRole("button", { name: "Password" });
+
+      expect(input?.type).toBe("password");
+      expect(toggle).toHaveAttribute("aria-pressed", "false");
+
+      fireEvent.click(toggle);
+      expect(input?.type).toBe("text");
+      expect(toggle).toHaveAttribute("aria-pressed", "true");
+
+      fireEvent.click(toggle);
+      expect(input?.type).toBe("password");
     });
   });
 

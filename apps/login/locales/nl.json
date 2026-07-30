@@ -78,13 +78,13 @@
         "couldNotResetPassword": "Kon wachtwoord niet resetten"
       },
       "info": {
-        "passwordResetSent": "Het wachtwoord is opnieuw ingesteld. Controleer jouw e-mail"
+        "passwordResetSent": "Als er een account voor dit adres bestaat, is er een code verzonden. Controleer ook de spammap"
       }
     },
     "set": {
       "title": "Stel Wachtwoord in",
       "description": "Stel het wachtwoord voor jouw account in",
-      "codeSent": "Er is een nieuwe code naar uw e-mailadres verzonden.",
+      "codeSent": "Als er een account voor dit adres bestaat, is er een code verzonden. Controleer ook de spammap.",
       "noCodeReceived": "Geen code ontvangen?",
       "resend": "Code opnieuw versturen",
       "submit": "Verder",

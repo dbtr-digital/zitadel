@@ -26,7 +26,6 @@
     "title": "Willkommen zurück!",
     "description": "Geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein.",
     "register": "Neuen Benutzer registrieren",
-    "existingAccount": "Diese E-Mail-Adresse existiert bereits. Bitte melden Sie sich jetzt an.",
     "submit": "Weiter",
     "labels": {
       "loginname": "E-Mail",
@@ -79,13 +78,13 @@
         "couldNotResetPassword": "Passwort konnte nicht zurückgesetzt werden"
       },
       "info": {
-        "passwordResetSent": "Passwort wurde zurückgesetzt. Bitte prüfen Sie Ihre E-Mails"
+        "passwordResetSent": "Wenn ein Konto für diese Adresse existiert, wurde ein Code gesendet. Prüfen Sie bitte auch den Spam-Ordner"
       }
     },
     "set": {
       "title": "Passwort festlegen",
       "description": "Legen Sie das Passwort für Ihr Konto fest",
-      "codeSent": "Ein neuer Code wurde an Ihre E-Mail-Adresse gesendet.",
+      "codeSent": "Wenn ein Konto für diese Adresse existiert, wurde ein Code gesendet. Prüfen Sie bitte auch den Spam-Ordner.",
       "noCodeReceived": "Keinen Code erhalten?",
       "resend": "Erneut senden",
       "submit": "Weiter",
@@ -385,10 +384,6 @@
     "userIdMissing": "Keine Benutzer-ID angegeben!",
     "successTitle": "Benutzer verifiziert",
     "successDescription": "Der Benutzer wurde erfolgreich verifiziert.",
-    "alreadyVerifiedDescription": "Diese E-Mail-Adresse ist bereits verifiziert. Sie können sich jetzt anmelden.",
-    "successLogin": "Einloggen",
-    "successAssistant": "Einrichtungs-Assistent",
-    "successHome": "Startseite",
     "successContinue": "Weiter",
     "setupAuthenticator": "Authentifikator einrichten",
     "verify": {
@@ -409,7 +404,7 @@
       "couldNotResendEmail": "E-Mail konnte nicht erneut gesendet werden",
       "couldNotVerifyUser": "Benutzer konnte nicht verifiziert werden",
       "couldNotVerifyInvite": "Einladung konnte nicht verifiziert werden",
-      "couldNotVerifyEmail": "Der Code ist abgelaufen oder ungültig. Bitte fordern Sie einen neuen an.",
+      "couldNotVerifyEmail": "E-Mail konnte nicht verifiziert werden",
       "couldNotVerify": "Konnte nicht verifizieren",
       "couldNotLoadUser": "Benutzer konnte nicht geladen werden",
       "couldNotLoadAuthenticators": "Mögliche Authentifikatoren konnten nicht geladen werden",

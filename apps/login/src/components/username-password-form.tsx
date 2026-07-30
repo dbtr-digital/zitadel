@@ -1,11 +1,9 @@
 "use client";
 
 // dbtr-Fork: kombinierte E-Mail+Passwort-Eingabe auf EINEM Screen.
-// Ablauf: sendLoginname routet wie gehabt (Passkey/IdP/Verify bleiben erhalten);
-// zeigt das Routing auf /password und ist ein Passwort eingegeben, wird der
-// Passwort-Check direkt ausgeführt (sendPassword kann User-Suche + Passwort-Check
-// in einem Schritt, auch ohne vorherige Session). Leeres Passwort = Verhalten
-// der Original-UsernameForm (zweischrittig) — deckt Passkey-/IdP-only-Nutzer ab.
+// Ablauf: Mit Passwort authentifiziert sendPassword direkt in einem Request.
+// Ohne Passwort routet sendLoginname wie die Original-Form weiter und erhält
+// damit Passkey-/IdP-only- und Verify-Pfade.
 
 import { handleServerActionResponse } from "@/lib/client-utils";
 import { sendLoginname } from "@/lib/server/loginname";
@@ -17,9 +15,9 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Alert, AlertType } from "./alert";
+import { Alert } from "./alert";
 import { AutoSubmitForm } from "./auto-submit-form";
-import { Button, ButtonVariants } from "./button";
+import { Button, ButtonSizes, ButtonVariants } from "./button";
 import { TextInput } from "./input";
 import { Spinner } from "./spinner";
 import { Translated } from "./translated";
@@ -67,7 +65,6 @@ export function UsernamePasswordForm({
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [info, setInfo] = useState<string>("");
   const [samlData, setSamlData] = useState<{ url: string; fields: Record<string, string> } | null>(null);
 
   const submitLoginNameOnly = useCallback(
@@ -75,7 +72,7 @@ export function UsernamePasswordForm({
       setLoading(true);
       try {
         const res = await sendLoginname({
-          loginName: values.loginName,
+          loginName: values.loginName.trim(),
           organization,
           defaultOrganization,
           requestId,
@@ -97,87 +94,75 @@ export function UsernamePasswordForm({
   const submitCombined = useCallback(
     async (values: Inputs) => {
       setError("");
-      setInfo("");
+      const normalizedLoginName = values.loginName.trim();
 
       // Ohne Passwort exakt das Original-Verhalten (zweischrittig) — nötig für
       // Passkey-/IdP-only-Konten und als Fallback.
       if (!values.password) {
-        return submitLoginNameOnly({ loginName: values.loginName }, organization);
+        return submitLoginNameOnly({ loginName: normalizedLoginName }, organization);
       }
 
       setLoading(true);
       try {
-        const res = await sendLoginname({
-          loginName: values.loginName,
+        // sendPassword kann Suche, Session-Erstellung und Passwortprüfung selbst
+        // ausführen. Der direkte Aufruf vermeidet einen zweiten Server-Roundtrip
+        // und reduziert Timing-/Hydration-Probleme in Chromium-Browsern.
+        const response = await sendPassword({
+          loginName: normalizedLoginName,
           organization,
           defaultOrganization,
           requestId,
-          suffix,
-          ignoreUnknownUsernames: loginSettings?.ignoreUnknownUsernames,
+          checks: create(ChecksSchema, {
+            password: { password: values.password },
+          }),
         });
 
-        if (res && "redirect" in res && res.redirect && res.redirect.startsWith("/password?")) {
-          // Passwort-Nutzer (oder Enumeration-Schutz-Pfad): Check direkt hier,
-          // mit den von sendLoginname aufgelösten Parametern (loginName/organization).
-          const params = new URLSearchParams(res.redirect.substring(res.redirect.indexOf("?") + 1));
-          const response = await sendPassword({
-            loginName: params.get("loginName") ?? values.loginName,
-            organization: params.get("organization") ?? organization,
-            defaultOrganization,
-            requestId: params.get("requestId") ?? requestId,
-            checks: create(ChecksSchema, {
-              password: { password: values.password },
-            }),
-          });
-
-          handleServerActionResponse(response, router, setSamlData, setError);
-          return;
-        }
-
-        // Alle anderen Wege (Passkey, IdP, Verify, Fehler) regulär behandeln.
-        handleServerActionResponse(res, router, setSamlData, setError);
+        handleServerActionResponse(response, router, setSamlData, setError);
       } catch {
         setError(t("errors.internalError"));
       } finally {
         setLoading(false);
       }
     },
-    [defaultOrganization, requestId, suffix, loginSettings, organization, router, t, submitLoginNameOnly],
+    [defaultOrganization, requestId, organization, router, t, submitLoginNameOnly],
   );
 
   // "Passwort vergessen?" direkt vom Login-Screen: nimmt die bereits
   // eingetragene E-Mail mit — keine Doppeleingabe.
   async function resetPasswordAndContinue() {
     setError("");
-    setInfo("");
 
-    const currentLoginName = getValues("loginName");
+    const currentLoginName = getValues("loginName").trim();
     if (!currentLoginName) {
       setError(t("required.loginName"));
       return;
     }
 
     setLoading(true);
-    const response = await resetPassword({
-      loginName: currentLoginName,
-      organization,
-      defaultOrganization,
-      requestId,
-    })
-      .catch(() => {
-        setError(tPassword("errors.couldNotSendResetLink"));
-        return;
-      })
-      .finally(() => {
-        setLoading(false);
+    let response;
+    try {
+      response = await resetPassword({
+        loginName: currentLoginName,
+        organization,
+        defaultOrganization,
+        requestId,
       });
+    } catch {
+      setError(tPassword("errors.couldNotSendResetLink"));
+      return;
+    } finally {
+      setLoading(false);
+    }
 
-    if (response && "error" in response && response.error) {
-      setError(response.error as string);
+    if (!response) {
+      setError(tPassword("errors.couldNotSendResetLink"));
       return;
     }
 
-    setInfo(tPassword("verify.info.passwordResetSent"));
+    if ("error" in response && response.error) {
+      setError(response.error as string);
+      return;
+    }
 
     const params = new URLSearchParams({
       loginName: currentLoginName,
@@ -213,7 +198,7 @@ export function UsernamePasswordForm({
   return (
     <>
       {samlData && <AutoSubmitForm url={samlData.url} fields={samlData.fields} />}
-      <form className="w-full">
+      <form className="w-full" onSubmit={handleSubmit(submitCombined)} noValidate>
         <div className="flex flex-col gap-4">
           <TextInput
             type="text"
@@ -222,7 +207,10 @@ export function UsernamePasswordForm({
             autoCorrect="off"
             spellCheck={false}
             autoFocus
-            {...register("loginName", { required: t("required.loginName") })}
+            {...register("loginName", {
+              required: t("required.loginName"),
+              validate: (value) => !!value.trim() || t("required.loginName"),
+            })}
             label={inputLabel}
             data-testid="username-text-input"
             suffix={hideSuffix ? undefined : suffix}
@@ -238,10 +226,44 @@ export function UsernamePasswordForm({
           </div>
         </div>
 
-        <div className="flex w-full flex-row items-center justify-between">
-          {allowRegister ? (
+        {!loginSettings?.hidePasswordReset && (
+          <div className="-mt-1 flex w-full justify-end">
             <button
-              className="hover:text-primary-light-500 dark:hover:text-primary-dark-500 text-sm transition-all"
+              className="hover:text-primary-light-500 dark:hover:text-primary-dark-500 focus:ring-primary-light-500 dark:focus:ring-primary-dark-500 min-h-10 rounded px-1 text-sm transition-all focus:ring-2 focus:outline-none"
+              onClick={resetPasswordAndContinue}
+              type="button"
+              disabled={loading}
+              data-testid="reset-button"
+            >
+              <Translated i18nKey="verify.resetPassword" namespace="password" />
+            </button>
+          </div>
+        )}
+
+        {error && (
+          <div className="py-4" data-testid="error">
+            <Alert>{error}</Alert>
+          </div>
+        )}
+
+        <div className="mt-4 flex w-full flex-col gap-3">
+          <Button
+            data-testid="submit-button"
+            type="submit"
+            className="w-full justify-center"
+            size={ButtonSizes.Large}
+            variant={ButtonVariants.Primary}
+            disabled={loading || !formState.isValid}
+          >
+            {loading && <Spinner className="mr-2 h-5 w-5" />}
+            <Translated i18nKey="submit" namespace="loginname" />
+          </Button>
+
+          {allowRegister && (
+            <Button
+              className="w-full justify-center"
+              size={ButtonSizes.Large}
+              variant={ButtonVariants.Secondary}
               onClick={() => {
                 const registerParams = new URLSearchParams();
                 if (organization) {
@@ -258,48 +280,8 @@ export function UsernamePasswordForm({
               data-testid="register-button"
             >
               <Translated i18nKey="register" namespace="loginname" />
-            </button>
-          ) : (
-            <span></span>
+            </Button>
           )}
-          {!loginSettings?.hidePasswordReset && (
-            <button
-              className="hover:text-primary-light-500 dark:hover:text-primary-dark-500 text-sm transition-all"
-              onClick={() => resetPasswordAndContinue()}
-              type="button"
-              disabled={loading}
-              data-testid="reset-button"
-            >
-              <Translated i18nKey="verify.resetPassword" namespace="password" />
-            </button>
-          )}
-        </div>
-
-        {info && (
-          <div className="py-4">
-            <Alert type={AlertType.INFO}>{info}</Alert>
-          </div>
-        )}
-
-        {error && (
-          <div className="py-4" data-testid="error">
-            <Alert>{error}</Alert>
-          </div>
-        )}
-
-        <div className="mt-4 flex w-full flex-row items-center">
-          <span className="flex-grow"></span>
-          <Button
-            data-testid="submit-button"
-            type="submit"
-            className="self-end"
-            variant={ButtonVariants.Primary}
-            disabled={loading || !formState.isValid}
-            onClick={handleSubmit((e) => submitCombined(e))}
-          >
-            {loading && <Spinner className="mr-2 h-5 w-5" />}
-            <Translated i18nKey="submit" namespace="loginname" />
-          </Button>
         </div>
       </form>
     </>
