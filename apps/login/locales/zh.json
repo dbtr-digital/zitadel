@@ -51,7 +51,8 @@
       "passkeysNotAllowed": "不允许使用 Passkey！请联系管理员了解更多信息。",
       "couldNotFindIdentityProvider": "找不到身份提供者。",
       "userNotActive": "用户未激活。请联系管理员了解更多信息。"
-    }
+    },
+    "moreOptions": "更多选项"
   },
   "zitadel": {
     "errors": {
@@ -77,13 +78,13 @@
         "couldNotResetPassword": "无法重置密码"
       },
       "info": {
-        "passwordResetSent": "密码已重置。请检查您的电子邮件"
+        "passwordResetSent": "如果此地址对应的帐户存在，验证码已发送。另请检查垃圾邮件文件夹"
       }
     },
     "set": {
       "title": "设置密码",
       "description": "为您的账户设置密码",
-      "codeSent": "新代码已发送到您的电子邮件地址。",
+      "codeSent": "如果此地址对应的帐户存在，验证码已发送。另请检查垃圾邮件文件夹。",
       "noCodeReceived": "没有收到验证码？",
       "resend": "重发验证码",
       "submit": "继续",

@@ -51,7 +51,8 @@
       "passkeysNotAllowed": "Chaves de acesso não são permitidas! Entre em contato com o administrador para mais informações.",
       "couldNotFindIdentityProvider": "Não foi possível encontrar o provedor de identidade.",
       "userNotActive": "O usuário não está ativo. Entre em contato com o administrador para mais informações."
-    }
+    },
+    "moreOptions": "Mais opções"
   },
   "zitadel": {
     "errors": {
@@ -77,13 +78,13 @@
         "couldNotResetPassword": "Não foi possível redefinir a senha"
       },
       "info": {
-        "passwordResetSent": "A senha foi redefinida. Por favor, verifique seu e-mail"
+        "passwordResetSent": "Se existir uma conta para este endereço, foi enviado um código. Verifique também a pasta de spam"
       }
     },
     "set": {
       "title": "Definir Senha",
       "description": "Defina a senha da sua conta",
-      "codeSent": "Um código foi enviado para o seu e-mail.",
+      "codeSent": "Se existir uma conta para este endereço, foi enviado um código. Verifique também a pasta de spam.",
       "noCodeReceived": "Não recebeu o código?",
       "resend": "Reenviar código",
       "submit": "Continuar",
