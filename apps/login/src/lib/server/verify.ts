@@ -76,6 +76,24 @@ export async function sendVerification(command: VerifyUserByEmailCommand) {
   const _headers = await headers();
   const { serviceConfig } = getServiceConfig(_headers);
 
+  // Verification links are intentionally idempotent. Mail clients and users
+  // commonly open the same link more than once; an already verified address is
+  // a successful state, not a generic verification error.
+  if (!command.isInvite) {
+    const existingUser = await getUserByID({ serviceConfig, userId: command.userId });
+    const existingHuman = existingUser?.user?.type.case === "human" ? existingUser.user.type.value : undefined;
+    if (existingHuman?.email?.isVerified && existingUser?.user) {
+      const params = new URLSearchParams({
+        userId: command.userId,
+        loginName: command.loginName ?? existingUser.user.preferredLoginName,
+        alreadyVerified: "true",
+      });
+      if (command.organization) params.set("organization", command.organization);
+      if (command.requestId) params.set("requestId", command.requestId);
+      return { redirect: `/verify/success?${params}` };
+    }
+  }
+
   const verifyResponse = command.isInvite
     ? await verifyInviteCode({ serviceConfig, userId: command.userId, verificationCode: command.code }).catch((error) => {
         logger.warn("Could not verify invite:", { error });

@@ -51,7 +51,8 @@
       "passkeysNotAllowed": "Las passkeys no están permitidas. Contacte con su administrador para más información.",
       "couldNotFindIdentityProvider": "No se pudo encontrar el proveedor de identidad.",
       "userNotActive": "El usuario no está activo. Contacte con su administrador para más información."
-    }
+    },
+    "moreOptions": "Más opciones"
   },
   "zitadel": {
     "errors": {
@@ -77,13 +78,13 @@
         "couldNotResetPassword": "No se pudo restablecer la contraseña"
       },
       "info": {
-        "passwordResetSent": "Se restableció la contraseña. Por favor, revise su correo electrónico"
+        "passwordResetSent": "Si existe una cuenta para esta dirección, se ha enviado un código. Revise también la carpeta de correo no deseado"
       }
     },
     "set": {
       "title": "Establecer Contraseña",
       "description": "Establece la contraseña para tu cuenta",
-      "codeSent": "Se ha enviado un nuevo código a su dirección de correo electrónico.",
+      "codeSent": "Si existe una cuenta para esta dirección, se ha enviado un código. Revise también la carpeta de correo no deseado.",
       "noCodeReceived": "¿No recibiste un código?",
       "resend": "Reenviar código",
       "submit": "Continuar",

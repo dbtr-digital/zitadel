@@ -88,9 +88,23 @@ export async function registerUser(
     password: command.password ? command.password : undefined,
     organization: command.organization,
   }).catch((error) => {
+    if (error instanceof ConnectError && error.code === Code.AlreadyExists) {
+      const params = new URLSearchParams({
+        loginName: command.email,
+        existing: "true",
+      });
+      if (command.organization) params.set("organization", command.organization);
+      if (command.requestId) params.set("requestId", command.requestId);
+      logger.info("Registration attempted for existing user; redirecting to login", { email: command.email });
+      return { existingLogin: `/loginname?${params}` };
+    }
     logger.error("Failed to create user", { error });
     return null;
   });
+
+  if (addResponse && "existingLogin" in addResponse) {
+    return { redirect: addResponse.existingLogin };
+  }
 
   if (!addResponse) {
     return { error: t("errors.couldNotCreateUser") };
