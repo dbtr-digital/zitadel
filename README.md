@@ -1,3 +1,13 @@
+## dbtr Login-Forks — ausgelieferter Quellstand
+
+Dieser Branch entspricht dem zentralen JUNOS-Login (Zitadel 4.19.5, Next.js 16.4.1).
+Die zentrale Atelier-Variante mit den Registrierungsablaeufen steht unter
+[dbtr-login-atelier](https://github.com/dbtr-digital/zitadel/tree/dbtr-login-atelier),
+der eigenstaendige Atelier-IdP unter
+[atelier-login](https://github.com/dbtr-digital/zitadel/tree/atelier-login).
+Die jeweiligen Build-Rezepte liegen im Server-/Anwendungsrepository; die
+Anwendungsdateien und das Lockfile hier entsprechen den angewendeten Patches.
+
 <p align="center">
     <img src="./apps/docs/public/img/logos/zitadel-logo-dark@2x.png#gh-light-mode-only" alt="ZITADEL Logo" max-height="200px" width="auto" />
     <img src="./apps/docs/public/img/logos/zitadel-logo-light@2x.png#gh-dark-mode-only" alt="ZITADEL Logo" max-height="200px" width="auto" />
