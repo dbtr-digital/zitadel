@@ -1,0 +1,25 @@
+FROM golang:1.27.3-alpine3.24@sha256:b8c9b82affbbb82a020bbcf998dad2ba9516944ac7e883524642a481a9505e9c AS go
+FROM node:24.22.1-alpine3.24@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS build
+COPY --from=go /usr/local/go /usr/local/go
+ENV PATH="/usr/local/go/bin:$PATH" GOTOOLCHAIN=local GOMAXPROCS=2 GOMEMLIMIT=512MiB CGO_ENABLED=0 NX_NO_CLOUD=true NX_DAEMON=false NEXT_TELEMETRY_DISABLED=1
+RUN apk add --no-cache bash git python3 make && corepack enable && corepack prepare pnpm@10.30.3 --activate
+WORKDIR /repo
+COPY . .
+RUN pnpm install --frozen-lockfile --filter @zitadel/console...
+# Upstream-Generatoren einzeln ausfuehren:14 Go-Werkzeuge nicht gleichzeitig
+# neben dem geteilten CI-Runner kompilieren. Alle Kommandos bleiben gepinnt.
+RUN python3 core-build-upstream.py generate-install
+RUN python3 core-build-upstream.py generate-stubs generate-assets generate-statik
+RUN apk add --no-cache curl gcompat
+RUN pnpm exec nx run @zitadel/console:build --parallel=1 --skip-nx-cache
+RUN python3 core-build-upstream.py build-console
+RUN git init -q && find /repo -name node_modules -prune -o -name .pnpm-store -prune -o -name .next -prune -o -exec chown -h node:node {} + \
+    && mkdir -p /tmp/core-go /tmp/core-go-cache && chown node:node /tmp/core-go /tmp/core-go-cache
+RUN su node -s /bin/sh -c 'GOPATH=/tmp/core-go GOCACHE=/tmp/core-go-cache go test -p 2 ./...' > /repo/core-unit-tests.log 2>&1; result=$?; printf "%s\n" "$result" > /repo/core-unit-tests.exit; grep -n -B 4 -A 12 -E "^FAIL|--- FAIL|panic:|fatal error:" /repo/core-unit-tests.log || true
+RUN test "$(cat /repo/core-unit-tests.exit)" = 0
+RUN go build -trimpath -buildvcs=false -ldflags="-s -w -X github.com/zitadel/zitadel/cmd/build.commit=8afa5dd-security20261023 -X github.com/zitadel/zitadel/cmd/build.date=2026-10-23T00:00:00Z -X github.com/zitadel/zitadel/cmd/build.version=v4.20.0-security20261023" -o /repo/zitadel-security .
+RUN go list -buildvcs=false -deps -json . > /repo/core-imports.json && go version -m /repo/zitadel-security > /repo/core-buildinfo.txt
+FROM scratch AS pruefnachweise
+COPY --from=build /repo/core-imports.json /repo/core-buildinfo.txt /repo/core-unit-tests.log /repo/core-unit-tests.exit /repo/zitadel-security /
+FROM ghcr.io/zitadel/zitadel:v4.20.0@sha256:9ea0e9ecfdc43115da871242e40a0320f2ece864c7cd8b5d41a863a7f4902499
+COPY --from=build --chown=1000:1000 /repo/zitadel-security /app/zitadel

@@ -1,3 +1,23 @@
+## dbtr Core-Sicherheitsbau auf ZITADEL4.20.0
+
+Basis `8afa5dd37a8e723efb9eace8d09fd5c1cccef694`, Go1.27.3, chi5.3.0,
+gorilla/csrf1.7.3. Originales Upstream-pnpm-Lockfile fuer die Console.
+Alle Go-Pakete werden vor dem Binary-Bau mit `go test -p 2 ./...` geprueft.
+Dieser Quellstand ist ein Build-Kandidat; die Veroeffentlichung belegt keinen Deploy.
+
+```sh
+docker buildx build --platform linux/amd64 --load -f Dockerfile.core-security -t zitadel-core:security .
+docker buildx build --platform linux/amd64 --target pruefnachweise --output type=local,dest=pruefnachweise -f Dockerfile.core-security .
+```
+
+Einen eigenen begrenzten BuildKit-Builder verwenden (geprueft mit6GiB/4CPU).
+Die zweite Zeile exportiert Importgraph, Binary, Buildinfo und Testprotokoll.
+Restore, Funktionspruefung und Sicherheitsbewertung sind gesonderte Gates.
+GO-2026-5932 betrifft OpenPGP, das im Importgraph dieses Programms nicht vorkommt.
+GO-2025-3884 betrifft `csrf.TrustedOrigins`; ZITADEL konfiguriert diese Option nicht.
+Der allgemeine Scannerhinweis wird dadurch nicht unterdrueckt oder umgeschrieben.
+Quellen: https://pkg.go.dev/vuln/GO-2026-5932 und https://pkg.go.dev/vuln/GO-2025-3884.
+
 <p align="center">
     <img src="./apps/docs/public/img/logos/zitadel-logo-dark@2x.png#gh-light-mode-only" alt="ZITADEL Logo" max-height="200px" width="auto" />
     <img src="./apps/docs/public/img/logos/zitadel-logo-light@2x.png#gh-dark-mode-only" alt="ZITADEL Logo" max-height="200px" width="auto" />
