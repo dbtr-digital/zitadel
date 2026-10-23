@@ -1,3 +1,15 @@
+## Quellangebote fuer den Sicherheitsstand4.20.0
+
+Die vollstaendigen Quellen samt eingefrorenen Abhaengigkeiten und Build-Rezepten
+vom23.10.2026 stehen in getrennten Zweigen:
+
+- [JUNOS-Login](https://github.com/dbtr-digital/zitadel/tree/dbtr-login-v4.20.0-security20261023)
+- [Atelier-Login, beide Betriebsorte](https://github.com/dbtr-digital/zitadel/tree/dbtr-login-atelier-v4.20.0-security20261023)
+- [ZITADEL Core](https://github.com/dbtr-digital/zitadel/tree/dbtr-core-v4.20.0-security20261023)
+
+Die Veroeffentlichung allein ist kein Nachweis einer produktiven Aktivierung.
+Der bisherige4.19.5-Quellstand dieses Zweigs bleibt fuer den Rueckweg erhalten:
+
 ## dbtr Login-Forks — ausgelieferter Quellstand
 
 Dieser Branch entspricht dem zentralen JUNOS-Login (Zitadel 4.19.5, Next.js 16.4.1).
