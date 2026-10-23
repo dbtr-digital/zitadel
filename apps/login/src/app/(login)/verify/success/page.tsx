@@ -15,6 +15,7 @@ export default async function Page(props: { searchParams: Promise<any> }) {
   const { serviceConfig } = getServiceConfig(_headers);
 
   const { loginName, organization, userId, requestId } = searchParams;
+  const alreadyVerified = searchParams?.alreadyVerified === "true";
 
   const branding = await getBrandingSettings({ serviceConfig, organization });
 
@@ -52,6 +53,11 @@ export default async function Page(props: { searchParams: Promise<any> }) {
     continueUrl = `/loginname?${params}`;
   }
 
+  const effectiveLoginName = loginName ?? user?.preferredLoginName;
+  const loginUrl = effectiveLoginName
+    ? `/loginname?${new URLSearchParams({ loginName: effectiveLoginName })}`
+    : "/loginname";
+
   return (
     <DynamicTheme branding={branding}>
       <div className="flex flex-col space-y-4">
@@ -59,7 +65,10 @@ export default async function Page(props: { searchParams: Promise<any> }) {
           <Translated i18nKey="successTitle" namespace="verify" />
         </h1>
         <p className="ztdl-p mb-6 block">
-          <Translated i18nKey="successDescription" namespace="verify" />
+          <Translated
+            i18nKey={alreadyVerified ? "alreadyVerifiedDescription" : "successDescription"}
+            namespace="verify"
+          />
         </p>
 
         {sessionFactors ? (
@@ -75,7 +84,18 @@ export default async function Page(props: { searchParams: Promise<any> }) {
           )
         )}
       </div>
-      <div className="w-full">{continueUrl && <VerifySuccessContinue continueUrl={continueUrl} />}</div>
+      <div className="mt-8 flex w-full flex-wrap items-center justify-end gap-3">
+        {continueUrl && <VerifySuccessContinue continueUrl={continueUrl} />}
+        <a className="ztdl-button" href={loginUrl}>
+          <Translated i18nKey="successLogin" namespace="verify" />
+        </a>
+        <a className="ztdl-button" href="https://app.atelier-master.com/#/onboarding">
+          <Translated i18nKey="successAssistant" namespace="verify" />
+        </a>
+        <a className="ztdl-button" href="https://app.atelier-master.com/#/">
+          <Translated i18nKey="successHome" namespace="verify" />
+        </a>
+      </div>
     </DynamicTheme>
   );
 }

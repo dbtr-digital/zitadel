@@ -1,4 +1,5 @@
 import { DynamicTheme } from "@/components/dynamic-theme";
+import { Alert, AlertType } from "@/components/alert";
 import { SignInWithIdp } from "@/components/sign-in-with-idp";
 import { Translated } from "@/components/translated";
 import { UsernamePasswordForm } from "@/components/username-password-form";
@@ -22,6 +23,7 @@ export default async function Page(props: { searchParams: Promise<Record<string 
   const organization = searchParams?.organization;
   const orgDomain = searchParams?.orgDomain;
   const submit: boolean = searchParams?.submit === "true";
+  const existing = searchParams?.existing === "true";
 
   // With an org domain suffix the login name may only be the local part (the
   // form shows the suffix separately), so put it back together for the IdP
@@ -62,6 +64,13 @@ export default async function Page(props: { searchParams: Promise<Record<string 
       </div>
 
       <div className="w-full">
+        {existing && (
+          <div className="mb-4">
+            <Alert type={AlertType.INFO}>
+              <Translated i18nKey="existingAccount" namespace="loginname" />
+            </Alert>
+          </div>
+        )}
         {loginSettings?.allowLocalAuthentication && (
           <UsernamePasswordForm
             loginName={loginName}

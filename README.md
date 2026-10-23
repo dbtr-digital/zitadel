@@ -1,6 +1,6 @@
 ## dbtr Sicherheitsstand auf ZITADEL 4.20.0
 
-Quellstand des JUNOS-Login-Kandidaten und des gehaerteten Core-Builds vom
+Quellstand des Atelier-Login-Kandidaten und des gehaerteten Core-Builds vom
 23.10.2026. Basis: Upstream `8afa5dd37a8e723efb9eace8d09fd5c1cccef694`.
 Die Atelier-Variante steht unter
 [dbtr-login-atelier-v4.20.0-security20261023](https://github.com/dbtr-digital/zitadel/tree/dbtr-login-atelier-v4.20.0-security20261023).
