@@ -1,3 +1,31 @@
+## dbtr Sicherheitsstand auf ZITADEL 4.20.0
+
+Quellstand des JUNOS-Login-Kandidaten und des gehaerteten Core-Builds vom
+23.10.2026. Basis: Upstream `8afa5dd37a8e723efb9eace8d09fd5c1cccef694`.
+Die Atelier-Variante steht unter
+[dbtr-login-atelier-v4.20.0-security20261023](https://github.com/dbtr-digital/zitadel/tree/dbtr-login-atelier-v4.20.0-security20261023).
+Dies ist ein Quellcode-Angebot; die Veroeffentlichung allein belegt keinen Deploy.
+
+Login: Node24.22.1, Next16.4.2; die eingebettete tar7.5.11-Kopie wird
+mit Versions-/Hashkontrolle durch tar7.5.22 ersetzt. Die benoetigte Lizenzdatei
+wird mitgenommen. npm wird nur aus dem fertigen Laufzeitimage entfernt.
+Beide Varianten bestehen jeweils1.037 Hersteller-Unit-Tests.
+Core: Go1.27.3, chi5.3.0, gorilla/csrf1.7.3; vollstaendiger `go test -p 2 ./...`
+ist Teil des Builds. Die sonstige Upstream-Logik bleibt erhalten.
+
+Reproduzieren (linux/amd64; ausreichenden Speicher und begrenzten eigenen
+BuildKit-Builder verwenden):
+
+```sh
+docker buildx build --platform linux/amd64 --load -f Dockerfile.login-fork -t zitadel-login:security .
+docker buildx build --platform linux/amd64 --load -f Dockerfile.core-security -t zitadel-core:security .
+docker buildx build --platform linux/amd64 --target pruefnachweise --output type=local,dest=pruefnachweise -f Dockerfile.core-security .
+```
+
+Die letzte Zeile exportiert Testprotokoll, Importgraph, Buildinfo und Binary.
+Datenbank-Restore, Funktionspruefung, Sicherheitsbewertung und Auslieferung
+sind gesonderte Gates; diese Befehle aktivieren keinen Produktivdienst.
+
 <p align="center">
     <img src="./apps/docs/public/img/logos/zitadel-logo-dark@2x.png#gh-light-mode-only" alt="ZITADEL Logo" max-height="200px" width="auto" />
     <img src="./apps/docs/public/img/logos/zitadel-logo-light@2x.png#gh-dark-mode-only" alt="ZITADEL Logo" max-height="200px" width="auto" />

@@ -1,0 +1,55 @@
+# dbtr-Fork der Zitadel-Login-UI (v4.20.0) — Ein-Screen-Login (E-Mail+Passwort),
+# "Weitere Optionen"-Accordion, Label "E-Mail". Baut das Next.js-Standalone-Bundle
+# im Container und verpackt es identisch zum Upstream apps/login/Dockerfile.
+FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS tar-bundle
+WORKDIR /tar-bundle
+COPY tar-bundle/package.json tar-bundle/package-lock.json ./
+RUN npm ci --ignore-scripts --no-audit --no-fund \
+    && node node_modules/@vercel/ncc/dist/ncc/cli.js build node_modules/tar/dist/commonjs/index.js --minify --license licenses.txt -o bundle
+COPY tar-bundle/pruefen.cjs ./
+RUN node pruefen.cjs
+
+FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS build
+RUN apk add --no-cache git bash
+RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
+WORKDIR /repo
+ENV NX_NO_CLOUD=true \
+    NX_DAEMON=false \
+    NEXT_TELEMETRY_DISABLED=1 \
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+COPY . .
+# Nur Login-App + Workspace-Abhängigkeiten (proto/client) installieren —
+# spart den riesigen Console-/Docs-Dependency-Baum.
+RUN pnpm install --frozen-lockfile --filter @zitadel/login...
+COPY --from=tar-bundle /tar-bundle/bundle /tar-bundle/bundle
+RUN node tar-bundle/einsetzen.cjs
+RUN pnpm exec nx run @zitadel/login:build --verbose
+# Hersteller-Unit-Gates enthalten Zertifikatstests mit dem OpenSSL-CLI.
+RUN apk add --no-cache openssl
+RUN pnpm --filter @zitadel/login test-unit --maxWorkers=2
+
+# --- Runtime (Spiegel von apps/login/Dockerfile) ------------------------------
+FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53
+WORKDIR /app
+# Die Runtime startet die fertige Anwendung direkt mit node. Die im Basisimage
+# eingebetteten npm-Bibliotheken werden weder zum Start noch zur Laufzeit gebraucht.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+RUN mkdir -p /.env-file && touch /.env-file/.env && chown -R nextjs:nodejs /.env-file
+
+COPY --from=build --chown=nextjs:nodejs /repo/apps/login/.next/standalone ./
+
+USER nextjs
+ENV HOSTNAME="::" \
+    PORT="3000" \
+    NODE_ENV="production" \
+    NODE_OPTIONS="--use-openssl-ca --require /app/load-ssl-cert-dir.cjs" \
+    SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt" \
+    ZITADEL_TLS_ENABLED="false" \
+    OTEL_SERVICE_NAME="zitadel-login" \
+    OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD ["/usr/local/bin/node", "/app/healthcheck.mjs", "/ui/v2/login/ready"]
+ENTRYPOINT ["/app/entrypoint.sh", "node", "apps/login/server.js"]

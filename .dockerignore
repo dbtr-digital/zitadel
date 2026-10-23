@@ -1,0 +1,7 @@
+.git
+**/node_modules
+**/.next
+.artifacts
+.pnpm-store
+Dockerfile*
+core-build-upstream.py
